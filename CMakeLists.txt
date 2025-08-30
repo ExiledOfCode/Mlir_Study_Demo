@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.15)
-project(dfnn_mlir)
+project(dfnn-mlir)
 
 # 设置C++标准
 set(CMAKE_CXX_STANDARD 17)
@@ -12,15 +12,33 @@ find_package(MLIR REQUIRED CONFIG)
 message(STATUS "Found LLVM ${LLVM_PACKAGE_VERSION}")
 message(STATUS "Using LLVM config: ${LLVM_DIR}")
 
-# 设置包含目录
-include_directories(${LLVM_INCLUDE_DIRS})
-include_directories(${MLIR_INCLUDE_DIRS})
+# LLVM库
+llvm_map_components_to_libnames(LLVM_LIBS
+    Support
+    Core
+    IRReader
+)
+
+# MLIR库
+set(MLIR_LIBS
+    MLIRIR
+    MLIRParser
+    MLIRSupport
+    MLIRFuncDialect
+    MLIRArithDialect
+    MLIRSCFDialect
+    MLIRMemRefDialect
+)
 
 # 添加一个简单的可执行文件
-add_executable(dfnn-mlir-main src/main.cpp)
+add_executable(simple_mlir src/simple_mlir.cpp)
 
-# 在target_link_libraries部分更新为：
-target_link_libraries(dfnn-mlir-main PRIVATE
-    MLIRIR
-    MLIRSupport
+# 设置包含目录
+target_include_directories(simple_mlir PRIVATE
+    ${CMAKE_SOURCE_DIR}/include
+    ${LLVM_INCLUDE_DIRS}
+    ${MLIR_INCLUDE_DIRS}
 )
+
+# 链接库
+target_link_libraries(simple_mlir PRIVATE ${LLVM_LIBS} ${MLIR_LIBS})
