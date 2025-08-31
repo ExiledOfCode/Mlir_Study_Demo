@@ -2,19 +2,22 @@
 
 # 配置代码补全
 # 1. 首先生成编译数据库
-# 确保在build目录中
 workspace='/home/wangjiyuan'
-cd "${workspace}/dfnn_my_mlir/build" || exit 1
+project_dir="${workspace}/dfnn_my_mlir"
+build_dir="${project_dir}/build"
+
+# 进入构建目录
+cd "${build_dir}" || exit 1
 
 # 让CMake生成编译数据库
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=ON ..
 
 # 创建符号链接到项目根目录
-ln -sf build/compile_commands.json ../compile_commands.json
+ln -sf "${build_dir}/compile_commands.json" "${project_dir}/compile_commands.json"
 
 # 检查编译数据库是否生成
-ls -la ../compile_commands.json
-head -5 ../compile_commands.json
+ls -la "${project_dir}/compile_commands.json"
+head -5 "${project_dir}/compile_commands.json"
 
 # 2. 配置clangd（代码补全）
 # 创建clangd配置目录和文件
@@ -22,7 +25,7 @@ mkdir -p ~/.config/clangd
 cat > ~/.config/clangd/config.yaml << EOF
 CompileFlags:
   Add:
-    - -I${workspace}/llvm-main/include
+    - -I${workspace}/llvm_install/include
     - -I${workspace}/miniconda3/envs/py312/include/python3.12
     - -std=c++17
   CompilationDatabase: .
@@ -31,21 +34,21 @@ Diagnostics:
 EOF
 
 # 3. 创建VSCode工作区配置
-mkdir -p "${workspace}/expr-simplifier/.vscode"
+mkdir -p "${project_dir}/.vscode"
 
-cat > "${workspace}/expr-simplifier/.vscode/settings.json" << EOF
+cat > "${project_dir}/.vscode/settings.json" << EOF
 {
-    "C_Cpp.default.compilerPath": "/data/llvm-main/bin/clang++",
+    "C_Cpp.default.compilerPath": "${workspace}/llvm_install/bin/clang++",
     "C_Cpp.default.cppStandard": "c++17",
     "C_Cpp.default.includePath": [
-        "${workspace}/llvm-main/include",
+        "${workspace}/llvm_install/include",
         "${workspace}/miniconda3/envs/py312/include/python3.12",
         "\${workspaceFolder}/include"
     ],
-    "clangd.path": "/data/llvm-main/bin/clangd",
+    "clangd.path": "${workspace}/llvm_install/bin/clangd",
     "clangd.arguments": [
         "--compile-commands-dir=\${workspaceFolder}/build",
-        "--query-driver=/data/llvm-main/bin/clang++",
+        "--query-driver=${workspace}/llvm_install/bin/clang++",
         "--header-insertion=never"
     ],
     "cmake.configureArgs": [
@@ -53,13 +56,13 @@ cat > "${workspace}/expr-simplifier/.vscode/settings.json" << EOF
     ],
     "editor.formatOnSave": true,
     "C_Cpp.formatting": "clangFormat",
-    "C_Cpp.clang_format_path": "/data/llvm-main/bin/clang-format",
+    "C_Cpp.clang_format_path": "${workspace}/llvm_install/bin/clang-format",
     "clangd.path": "/data/llvm-main/bin/clangd",
 }
 EOF
 
 # 4. 创建.clang-format文件（代码格式化）
-cat > "${workspace}/expr-simplifier/.clang-format" << EOF
+cat > "${project_dir}/.clang-format" << EOF
 BasedOnStyle: LLVM
 AccessModifierOffset: -2
 AlignAfterOpenBracket: Align
@@ -154,10 +157,10 @@ EOF
 
 # 5. 测试配置
 # 测试clangd
-cd "${workspace}/expr-simplifier" || exit 1
-/data/llvm-main/bin/clangd --check=include/ExprSimplifier.h
+cd "${project_dir}" || exit 1
+"${workspace}/llvm_install/bin/clangd" --check=src/simple_mlir.cpp
 
 # 测试代码格式化
-/data/llvm-main/bin/clang-format -i include/ExprSimplifier.h src/ExprSimplifier.cpp --style=file
+"${workspace}/llvm_install/bin/clang-format" -i src/simple_mlir.cpp --style=file
 
 echo "配置完成！请重新启动VSCode或者重新加载窗口"
