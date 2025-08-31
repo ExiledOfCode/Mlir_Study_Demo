@@ -2,7 +2,6 @@
 
 # 使用的版本是 llvm 11
 
-
 # llvm 编译指令
 cmake -G Ninja \
   -DCMAKE_BUILD_TYPE=Release \
@@ -20,7 +19,7 @@ cmake -G Ninja \
 # 使用我们 install 的路径进行 cmake 构建
 cmake   -DLLVM_DIR=~/llvm_install/lib/cmake/llvm   -DMLIR_DIR=~/llvm_install/lib/cmake/mlir   ..
 
-
-
+# mlir-opt path:
+# ~/llvm_install/bin/mlir-opt
 
 ```
