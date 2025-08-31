@@ -45,7 +45,7 @@ cat > "${project_dir}/.vscode/settings.json" << EOF
         "${workspace}/miniconda3/envs/py312/include/python3.12",
         "\${workspaceFolder}/include"
     ],
-    "clangd.path": "${workspace}/llvm_install/bin/clangd",
+    "clangd.path": "/data/llvm-main/bin/clangd",
     "clangd.arguments": [
         "--compile-commands-dir=\${workspaceFolder}/build",
         "--query-driver=${workspace}/llvm_install/bin/clang++",
@@ -57,7 +57,6 @@ cat > "${project_dir}/.vscode/settings.json" << EOF
     "editor.formatOnSave": true,
     "C_Cpp.formatting": "clangFormat",
     "C_Cpp.clang_format_path": "${workspace}/llvm_install/bin/clang-format",
-    "clangd.path": "/data/llvm-main/bin/clangd",
 }
 EOF
 
@@ -156,11 +155,11 @@ UseTab: Never
 EOF
 
 # 5. 测试配置
-# 测试clangd
-cd "${project_dir}" || exit 1
-"${workspace}/llvm_install/bin/clangd" --check=src/simple_mlir.cpp
+# # 测试clangd
+# cd "${project_dir}" || exit 1
+# "/data/llvm-main/bin/clangd" --check=src/simple_mlir.cpp
 
-# 测试代码格式化
-"${workspace}/llvm_install/bin/clang-format" -i src/simple_mlir.cpp --style=file
+# # 测试代码格式化
+# "/data/llvm-main/bin/clangd" -i src/simple_mlir.cpp --style=file
 
 echo "配置完成！请重新启动VSCode或者重新加载窗口"
