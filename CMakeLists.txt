@@ -28,6 +28,9 @@ set(MLIR_LIBS
     MLIRArithDialect
     MLIRSCFDialect
     MLIRMemRefDialect
+    MLIRDialect
+    MLIRRewrite
+    MLIRTransforms
 )
 
 # 添加一个简单的可执行文件

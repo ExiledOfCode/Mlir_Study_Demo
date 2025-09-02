@@ -1,5 +1,6 @@
 ```sh
 
+
 # 使用的版本是 llvm 11
 
 # llvm 编译指令
@@ -21,5 +22,12 @@ cmake   -DLLVM_DIR=~/llvm_install/lib/cmake/llvm   -DMLIR_DIR=~/llvm_install/lib
 
 # mlir-opt path:
 # ~/llvm_install/bin/mlir-opt
+
+# 复用 commit 信息提交
+git commit --amend --no-edit
+
+
+
+
 
 ```
